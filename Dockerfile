@@ -22,6 +22,10 @@ WORKDIR /root/
 # Copy the binary from the builder stage
 COPY --from=builder /server .
 
+# ADD THIS: Copy the config folder into the image
+# This creates /root/config/config.yaml
+COPY config/ ./config/
+
 # Expose your API port (change 8080 if your code uses a different one)
 EXPOSE 8080
 
