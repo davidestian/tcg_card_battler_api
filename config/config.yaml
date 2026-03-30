@@ -1,8 +1,8 @@
 database:
-  host: "localhost"
-  port: 5432
+  host: "postgres.railway.internal"
+  port: 30601
   user: "postgres"
-  password: "a"
-  name: "tcg_card_battler"
+  password: "XjJjoTOhHrtMHSmAQZRhSxrGqRmPNjIO"
+  name: "railway"
 server:
   port: 8080
