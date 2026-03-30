@@ -49,7 +49,7 @@ func LoadConfig(path string) (*Config, error) {
 }
 
 func main() {
-	cfg, err := LoadConfig("../../config/config.yaml")
+	cfg, err := LoadConfig("config/config.yaml")
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
 	}
