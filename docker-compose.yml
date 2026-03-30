@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  # The Database
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=a
+      - POSTGRES_DB=tcg_card_battler
+    ports:
+      - "5432:5432" # Allows you to connect from your host machine too
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Your Go App
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # CRITICAL: Use 'db' (the service name) as the hostname
+      - DATABASE_URL=postgres://postgres:a@localhost:5432/tcg_card_battler?sslmode=disable
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"tcg_card_battler/web-api/internal/handler"
 	"tcg_card_battler/web-api/internal/middleware"
 	"tcg_card_battler/web-api/internal/repository"
@@ -12,11 +13,50 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-yaml"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type Config struct {
+	Database struct {
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Name     string `yaml:"name"`
+	} `yaml:"database"`
+	Server struct {
+		Port int `yaml:"port"`
+	} `yaml:"server"`
+}
+
+func LoadConfig(path string) (*Config, error) {
+	config := &Config{}
+
+	// Read the file
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal (parse) the YAML into the struct
+	err = yaml.Unmarshal(file, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
 func main() {
-	dsn := "postgres://postgres:a@localhost:5432/tcg_card_battler"
+	cfg, err := LoadConfig("../../config/config.yaml")
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
+
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Name)
+
 	pool, err := ConnectDB(context.Background(), dsn)
 	if err != nil {
 		log.Fatal(err)
@@ -69,7 +109,7 @@ func main() {
 	router.Static("/asset/images", "D:/David/tcg_card_battler_images")
 
 	// Run the server
-	router.Run(":8080")
+	router.Run(fmt.Sprintf(":%d", cfg.Server.Port))
 }
 
 func ConnectDB(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
