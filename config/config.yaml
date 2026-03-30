@@ -1,5 +1,5 @@
 database:
-  host: "postgres.railway.internal"
+  host: "hopper.proxy.rlwy.net"
   port: 30601
   user: "postgres"
   password: "XjJjoTOhHrtMHSmAQZRhSxrGqRmPNjIO"
