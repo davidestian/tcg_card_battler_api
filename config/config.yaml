@@ -1,8 +1,10 @@
 database:
-  host: "hopper.proxy.rlwy.net"
-  port: 30601
+  host: "localhost"
+  port: 5432
   user: "postgres"
-  password: "XjJjoTOhHrtMHSmAQZRhSxrGqRmPNjIO"
-  name: "railway"
+  password: "a"
+  name: "tcg_card_battler"
 server:
   port: 8080
+asset:
+  img_path: 'D:\David\Projects\tcg_card_battler_images'

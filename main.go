@@ -28,6 +28,9 @@ type Config struct {
 	Server struct {
 		Port int `yaml:"port"`
 	} `yaml:"server"`
+	Asset struct {
+		IMG_PATH string `yaml:"img_path"`
+	} `yaml:"asset"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -106,7 +109,7 @@ func main() {
 		route.RegisterBattleRoutes(api2, battleHandler)
 	}
 
-	router.Static("/asset/images", "./asset/images")
+	router.Static("/asset/images", cfg.Asset.IMG_PATH)
 
 	// Run the server
 	router.Run(fmt.Sprintf(":%d", cfg.Server.Port))
