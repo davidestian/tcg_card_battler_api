@@ -224,12 +224,19 @@ func (r *teamRepositoryImpl) DeletePlayerTeam(ctx context.Context, accountID, pl
 func (r *teamRepositoryImpl) GetPlayerUnitByTeamID(ctx context.Context, accountID, playerTeamID string) ([]team_dto.PlayerTeamUnit, error) {
 	query := `
 		SELECT 
-			pu.player_unit_id, pu.player_unit_level, pul.image_type_number, u.unit_code, unit_name, origin, unit_level, tags,
-			offense, defense, technique, speed, spirit, u.element_id_1, u.element_id_2
+			pu.player_unit_id, pu.player_unit_level, pul.image_type_number, u.unit_code, unit_name, origin, unit_level,
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit, 
+			u.element_id_1, u.element_id_2
 		FROM player_units pu
 		JOIN player_teams pt ON pu.player_unit_id IN (pt.player_unit_id_1, pt.player_unit_id_2, pt.player_unit_id_3)
 		JOIN player_unit_levels pul on pu.player_unit_id = pul.player_unit_id
 		JOIN units u on pul.unit_code= u.unit_code
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		WHERE pt.player_team_id = $2
 		AND pu.account_id = $1
 		ORDER BY 
@@ -251,7 +258,7 @@ func (r *teamRepositoryImpl) GetPlayerUnitByTeamID(ctx context.Context, accountI
 		var r team_dto.PlayerTeamUnit
 
 		err := rows.Scan(&r.PlayerUnitID, &r.PlayerUnitLevel, &r.ImageTypeNumber,
-			&r.UnitCode, &r.UnitName, &r.Origin, &r.UnitLevel, &r.Tags,
+			&r.UnitCode, &r.UnitName, &r.Origin, &r.UnitLevel,
 			&r.Offense, &r.Defense, &r.Technique, &r.Speed, &r.Spirit, &r.ElementID1, &r.ElementID2,
 		)
 

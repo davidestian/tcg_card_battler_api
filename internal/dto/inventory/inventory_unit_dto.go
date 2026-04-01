@@ -1,14 +1,13 @@
 package inv_dto
 
 type PlayerUnitDetailRS struct {
-	PlayerUnitID    string   `json:"playerUnitID"`
-	FirstUnitCode   string   `json:"firstUnitCode"`
-	LastUnitCode    string   `json:"lastUnitCode"`
-	Origin          string   `json:"origin"`
-	UnitName        string   `json:"unitName"`
-	PlayerUnitLevel int      `json:"playerUnitLevel"`
-	Tags            []string `json:"tags"`
-	ImageTypeNumber int      `json:"imageTypeNumber"`
+	PlayerUnitID    string `json:"playerUnitID"`
+	FirstUnitCode   string `json:"firstUnitCode"`
+	LastUnitCode    string `json:"lastUnitCode"`
+	Origin          string `json:"origin"`
+	UnitName        string `json:"unitName"`
+	PlayerUnitLevel int    `json:"playerUnitLevel"`
+	ImageTypeNumber int    `json:"imageTypeNumber"`
 }
 
 type GetPlayerUnitRS struct {
@@ -47,6 +46,8 @@ type PlayerUnitPrevLevelRS struct {
 	Technique       int    `json:"technique"`
 	Speed           int    `json:"speed"`
 	Spirit          int    `json:"spirit"`
+	ElementID1      int    `json:"elementID1"`
+	ElementID2      int    `json:"elementID2"`
 }
 
 type PlayerUnitLevelChangeImageRQ struct {

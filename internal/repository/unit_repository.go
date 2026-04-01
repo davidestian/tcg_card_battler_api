@@ -26,8 +26,16 @@ func NewUnitRepository(pool *pgxpool.Pool) UnitRepository {
 func (r *unitRepositoryImpl) GetUnitByCode(ctx context.Context, unitCode string) (*unit_dto.Unit, error) {
 	query := `
 		SELECT 
-			unit_code, unit_name, origin, unit_level, offense, defense, technique, speed, spirit, tags, element_id_1, element_id_2
-		FROM units
+			u.unit_code, u.unit_name, u.origin, u.unit_level,
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit,
+			element_id_1, element_id_2
+		FROM units u
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		WHERE unit_code = $1
 		`
 
@@ -42,7 +50,6 @@ func (r *unitRepositoryImpl) GetUnitByCode(ctx context.Context, unitCode string)
 		&data.Technique,
 		&data.Speed,
 		&data.Spirit,
-		&data.Tags,
 		&data.ElementID1,
 		&data.ElementID2,
 	)
@@ -56,9 +63,17 @@ func (r *unitRepositoryImpl) GetUnitByCode(ctx context.Context, unitCode string)
 func (r *unitRepositoryImpl) GetAllUnitLevelPathByCode(ctx context.Context, unitCode string) ([]unit_dto.GetUnitNextLevelPathRS, error) {
 	query := `
 		SELECT 
-			to_unit_code, u.unit_name, u.origin, u.tags, u.offense, u.defense, u.technique, u.speed, u.spirit, u.element_id_1, u.element_id_2
+			to_unit_code, u.unit_name, u.origin, 
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit,
+			u.element_id_1, u.element_id_2
 		FROM unit_level_paths ulp
 		JOIN units u on ulp.to_unit_code = u.unit_code
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		WHERE from_unit_code = $1`
 
 	rows, err := r.Pool.Query(ctx, query, unitCode)
@@ -71,7 +86,7 @@ func (r *unitRepositoryImpl) GetAllUnitLevelPathByCode(ctx context.Context, unit
 	for rows.Next() {
 		var row unit_dto.GetUnitNextLevelPathRS
 
-		err := rows.Scan(&row.UnitCode, &row.UnitName, &row.Origin, &row.Tags,
+		err := rows.Scan(&row.UnitCode, &row.UnitName, &row.Origin,
 			&row.Offense, &row.Defense, &row.Technique, &row.Speed, &row.Spirit,
 			&row.ElementID1, &row.ElementID2)
 		if err != nil {
@@ -86,9 +101,17 @@ func (r *unitRepositoryImpl) GetAllUnitLevelPathByCode(ctx context.Context, unit
 func (r *unitRepositoryImpl) GetUnitLevelPathByCode(ctx context.Context, unitCode string, targetUnitCode string) (*unit_dto.GetUnitNextLevelPathRS, error) {
 	query := `
 		SELECT 
-			to_unit_code, u.unit_name, u.origin, u.unit_level, u.tags, u.offense, u.defense, u.technique, u.speed, u.spirit, u.element_id_1, u.element_id_2
+			to_unit_code, u.unit_name, u.origin, u.unit_level, 
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit,
+			u.element_id_1, u.element_id_2
 		FROM unit_level_paths ulp
 		JOIN units u on ulp.to_unit_code = u.unit_code
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		WHERE from_unit_code = $1
 		AND to_unit_code = $2`
 
@@ -98,7 +121,6 @@ func (r *unitRepositoryImpl) GetUnitLevelPathByCode(ctx context.Context, unitCod
 		&data.UnitName,
 		&data.Origin,
 		&data.UnitLevel,
-		&data.Tags,
 		&data.Offense, &data.Defense, &data.Technique, &data.Speed, &data.Spirit,
 		&data.ElementID1, &data.ElementID2,
 	)
@@ -135,9 +157,17 @@ func (r *unitRepositoryImpl) GetRandomUnitByLevel(ctx context.Context, level int
 		    ) AS child
 		)
 		SELECT 
-			u.unit_code, unit_name, origin, unit_level, u.offense, u.defense, u.technique, u.speed, u.spirit, image_type_count, tags, u.element_id_1, u.element_id_2
+			u.unit_code, unit_name, origin, unit_level,  
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit, 
+			u.element_id_1, u.element_id_2
 		FROM unit_path up
 		JOIN units u on up.unit_code = u.unit_code
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		ORDER BY unit_level;
 	`
 	rows, err := r.Pool.Query(ctx, query, level)
@@ -151,7 +181,8 @@ func (r *unitRepositoryImpl) GetRandomUnitByLevel(ctx context.Context, level int
 		var row unit_dto.Unit
 
 		err := rows.Scan(&row.UnitCode, &row.UnitName, &row.Origin, &row.UnitLevel,
-			&row.Offense, &row.Defense, &row.Technique, &row.Speed, &row.Spirit, &row.ImageTypeCount, &row.Tags, &row.ElementID1, &row.ElementID2)
+			&row.Offense, &row.Defense, &row.Technique, &row.Speed, &row.Spirit,
+			&row.ImageTypeCount, &row.ElementID1, &row.ElementID2)
 		if err != nil {
 			log.Fatal(err)
 		}

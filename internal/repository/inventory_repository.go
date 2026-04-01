@@ -146,7 +146,6 @@ func (r *inventoryRepositoryImpl) InvGetPlayerUnitDetailByID(ctx context.Context
 		    u.origin, 
 		    u.unit_name, 
 		    pu.player_unit_level, 
-		    u.tags, 
 		    pul.image_type_number
 		FROM player_units pu
 		JOIN player_unit_levels pul ON pul.player_unit_id = pu.player_unit_id
@@ -163,7 +162,6 @@ func (r *inventoryRepositoryImpl) InvGetPlayerUnitDetailByID(ctx context.Context
 		&detail.Origin,
 		&detail.UnitName,
 		&detail.PlayerUnitLevel,
-		&detail.Tags,
 		&detail.ImageTypeNumber,
 	)
 
@@ -363,10 +361,17 @@ func (r *inventoryRepositoryImpl) InvGetPlayerUnitPrevLevel(ctx context.Context,
 	query := `
 		SELECT 
 			pu.player_unit_id, pul.target_level, u.image_type_count, u.unit_name, u.unit_code, u.origin, pul.image_type_number, 
-			u.offense, u.defense, u.technique, u.speed, u.spirit
+			e1.offense + e2.offense as offense,
+			e1.defense + e2.defense as defense,
+			e1.technique + e2.technique as technique,
+			e1.speed + e2.speed as speed,
+			e1.spirit + e2.spirit as spirit,
+			u.element_id_1, u.element_id_2
 		FROM player_units pu
 		JOIN player_unit_levels pul on pu.player_unit_id = pul.player_unit_id
 		JOIN units u on pul.unit_code = u.unit_code
+		JOIN elements e1 on u.element_id_1 = e1.element_id
+		JOIN elements e2 on u.element_id_2 = e2.element_id
 		WHERE 1=1
 		AND pu.account_id = $1
 		AND pu.player_unit_id = $2
@@ -383,7 +388,8 @@ func (r *inventoryRepositoryImpl) InvGetPlayerUnitPrevLevel(ctx context.Context,
 		var row inv_dto.PlayerUnitPrevLevelRS
 
 		err := rows.Scan(&row.PlayerUnitID, &row.TargetLevel, &row.ImageTypeCount, &row.UnitName, &row.UnitCode, &row.Origin, &row.ImageTypeNumber,
-			&row.Offense, &row.Defense, &row.Technique, &row.Speed, &row.Spirit)
+			&row.Offense, &row.Defense, &row.Technique, &row.Speed, &row.Spirit,
+			&row.ElementID1, &row.ElementID2)
 
 		if err != nil {
 			log.Fatal(err)

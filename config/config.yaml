@@ -3,7 +3,7 @@ database:
   port: 5432
   user: "postgres"
   password: "a"
-  name: "tcg_card_battler"
+  name: "tcg_card_battler_prod"
 server:
   port: 8080
 asset:

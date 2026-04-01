@@ -33,19 +33,18 @@ type PutActivePlayerTeamRQ struct {
 }
 
 type PlayerTeamUnit struct {
-	PlayerUnitID    string   `json:"playerUnitID"`
-	PlayerUnitLevel int      `json:"playerUnitLevel"`
-	ImageTypeNumber int      `json:"imageTypeNumber"`
-	UnitCode        string   `json:"unitCode"`
-	UnitName        string   `json:"unitName"`
-	Tags            []string `json:"tags"`
-	Origin          string   `json:"origin"`
-	UnitLevel       int      `json:"unitLevel"`
-	Offense         int      `json:"offense"`
-	Defense         int      `json:"defense"`
-	Technique       int      `json:"technique"`
-	Speed           int      `json:"speed"`
-	Spirit          int      `json:"spirit"`
-	ElementID1      int      `json:"elementID1"`
-	ElementID2      int      `json:"elementID2"`
+	PlayerUnitID    string `json:"playerUnitID"`
+	PlayerUnitLevel int    `json:"playerUnitLevel"`
+	ImageTypeNumber int    `json:"imageTypeNumber"`
+	UnitCode        string `json:"unitCode"`
+	UnitName        string `json:"unitName"`
+	Origin          string `json:"origin"`
+	UnitLevel       int    `json:"unitLevel"`
+	Offense         int    `json:"offense"`
+	Defense         int    `json:"defense"`
+	Technique       int    `json:"technique"`
+	Speed           int    `json:"speed"`
+	Spirit          int    `json:"spirit"`
+	ElementID1      int    `json:"elementID1"`
+	ElementID2      int    `json:"elementID2"`
 }
