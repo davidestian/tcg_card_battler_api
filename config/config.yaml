@@ -1,0 +1,10 @@
+database:
+  host: ""
+  port: 0
+  user: ""
+  password: ""
+  name: ""
+server:
+  port: 0
+asset:
+  img_path: ""
