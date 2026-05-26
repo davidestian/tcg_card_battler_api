@@ -35,7 +35,7 @@ func generateJWT(m account_dto.AccountDetailRS) (string, string, error) {
 		AccountID: m.AccountID,
 		Email:     m.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(10 * time.Second)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
 			Subject:   m.AccountID,
 		},
 	}
@@ -46,7 +46,7 @@ func generateJWT(m account_dto.AccountDetailRS) (string, string, error) {
 	}
 
 	rtClaims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
 		Subject:   m.AccountID,
 	}
 
