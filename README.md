@@ -1,2 +1,3 @@
-"# tcg_card_battler_api" 
-"# tcg_card_battler_api" 
+database on 
+
+https://github.com/davidestian/tcg_card_battler_database
